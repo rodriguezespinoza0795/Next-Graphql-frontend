@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import GitHubLabel from "./testSearchInputs"
+import EnhancedTable from './table'
 
 const query = `
   query ExampleQuery($skip: Int, $take: Int) {
@@ -37,7 +39,7 @@ const useEmployees = () => {
         const response = await requester( baseUrl, query, variables )
 
         const { data } = ( await response.json()) as { data: searchEmployeeResults[]}
-        setSearchResult(data)
+        setSearchResult(data.getAllEmployees)
         setStatus('success')
       } catch (error) {
         setStatus('error')
@@ -52,11 +54,21 @@ const useEmployees = () => {
 }
 
 function HomePage() {
+  const [ rows, setRows] = useState([])
   const { searchResult, status } = useEmployees()
 
   console.log(searchResult, status)
-  
-  return <div>Welcome to Next.js!</div>
+  console.log('count', searchResult)
+
+  return (
+    <>
+      { searchResult.length
+        ? <GitHubLabel labels={searchResult} setRows={setRows}/>
+        : <h1>No Info</h1>
+      }
+      <EnhancedTable rows={rows}/>
+    </>
+  );
 }
   
 export default HomePage

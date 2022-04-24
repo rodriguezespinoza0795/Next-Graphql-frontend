@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { useTheme, styled } from '@mui/material/styles';
-import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-import SettingsIcon from '@mui/icons-material/Settings';
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
 import Autocomplete, {
   AutocompleteCloseReason,
   autocompleteClasses,
 } from '@mui/material/Autocomplete';
-import ButtonBase from '@mui/material/ButtonBase';
-import InputBase from '@mui/material/InputBase';
 import Box from '@mui/material/Box';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import Container from '@mui/material/Container';
 
 interface PopperComponentProps {
   anchorEl?: any;
@@ -45,121 +46,32 @@ const StyledAutocompletePopper = styled('div')(({ theme }) => ({
     },
   },
   [`&.${autocompleteClasses.popperDisablePortal}`]: {
-    position: 'relative',
+    position: 'absolute'
   },
 }));
 
 function PopperComponent(props: PopperComponentProps) {
   const { disablePortal, anchorEl, open, ...other } = props;
+  other.style.position = 'absolute'
   return <StyledAutocompletePopper {...other} />;
 }
 
-const StyledPopper = styled(Popper)(({ theme }) => ({
-  border: `1px solid ${theme.palette.mode === 'light' ? '#e1e4e8' : '#30363d'}`,
-  boxShadow: `0 8px 24px ${
-    theme.palette.mode === 'light' ? 'rgba(149, 157, 165, 0.2)' : 'rgb(1, 4, 9)'
-  }`,
-  borderRadius: 6,
-  width: 300,
-  zIndex: theme.zIndex.modal,
-  fontSize: 13,
-  color: theme.palette.mode === 'light' ? '#24292e' : '#c9d1d9',
-  backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#1c2128',
-}));
-
-const StyledInput = styled(InputBase)(({ theme }) => ({
-  padding: 10,
-  width: '100%',
-  borderBottom: `1px solid ${
-    theme.palette.mode === 'light' ? '#eaecef' : '#30363d'
-  }`,
-  '& input': {
-    borderRadius: 4,
-    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#0d1117',
-    padding: 8,
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
-    border: `1px solid ${theme.palette.mode === 'light' ? '#eaecef' : '#30363d'}`,
-    fontSize: 14,
-    '&:focus': {
-      boxShadow: `0px 0px 0px 3px ${
-        theme.palette.mode === 'light'
-          ? 'rgba(3, 102, 214, 0.3)'
-          : 'rgb(12, 45, 107)'
-      }`,
-      borderColor: theme.palette.mode === 'light' ? '#0366d6' : '#388bfd',
-    },
-  },
-}));
-
-const Button = styled(ButtonBase)(({ theme }) => ({
-  fontSize: 13,
-  width: '100%',
-  textAlign: 'left',
-  paddingBottom: 8,
-  color: theme.palette.mode === 'light' ? '#586069' : '#8b949e',
-  fontWeight: 600,
-  '&:hover,&:focus': {
-    color: theme.palette.mode === 'light' ? '#0366d6' : '#58a6ff',
-  },
-  '& span': {
-    width: '100%',
-  },
-  '& svg': {
-    width: 16,
-    height: 16,
-  },
-}));
-
-export default function GitHubLabel() {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [value, setValue] = React.useState<LabelType[]>([labels[1], labels[11]]);
+export default function GitHubLabel({labels, setRows}) {
+  const [value, setValue] = React.useState<LabelType[]>([]);
   const [pendingValue, setPendingValue] = React.useState<LabelType[]>([]);
+  const [open, setOpen] = React.useState(false)
   const theme = useTheme();
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setPendingValue(value);
-    setAnchorEl(event.currentTarget);
-  };
+  console.log('value', value)
 
   const handleClose = () => {
     setValue(pendingValue);
-    if (anchorEl) {
-      anchorEl.focus();
-    }
-    setAnchorEl(null);
+    setRows(pendingValue);
+    setOpen(false)
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'github-label' : undefined;
-
   return (
-    <React.Fragment>
-      <Box sx={{ width: 221, fontSize: 13 }}>
-        <Button disableRipple aria-describedby={id} onClick={handleClick}>
-          <span>Labels</span>
-          <SettingsIcon />
-        </Button>
-        {value.map((label) => (
-          <Box
-            key={label.name}
-            sx={{
-              mt: '3px',
-              height: 20,
-              padding: '.15em 4px',
-              fontWeight: 600,
-              lineHeight: '15px',
-              borderRadius: '2px',
-            }}
-            style={{
-              backgroundColor: label.color,
-              color: theme.palette.getContrastText(label.color),
-            }}
-          >
-            {label.name}
-          </Box>
-        ))}
-      </Box>
-      <StyledPopper id={id} open={open} anchorEl={anchorEl} placement="bottom-start">
+    <Container fixed>
         <ClickAwayListener onClickAway={handleClose}>
           <div>
             <Box
@@ -171,10 +83,12 @@ export default function GitHubLabel() {
                 fontWeight: 600,
               }}
             >
-              Apply labels to this pull request
+              <FormGroup>
+                <FormControlLabel control={<Checkbox/>} label="By Supervisor" />
+              </FormGroup>
             </Box>
             <Autocomplete
-              open
+              open={open}
               multiple
               onClose={(
                 event: React.ChangeEvent<{}>,
@@ -198,7 +112,7 @@ export default function GitHubLabel() {
               disableCloseOnSelect
               PopperComponent={PopperComponent}
               renderTags={() => null}
-              noOptionsText="No labels"
+              noOptionsText="No Employees"
               renderOption={(props, option, { selected }) => (
                 <li {...props}>
                   <Box
@@ -218,8 +132,8 @@ export default function GitHubLabel() {
                       mr: 1,
                       mt: '2px',
                     }}
-                    style={{ backgroundColor: option.color }}
                   />
+                  <img style={{"height": "28px", "padding-right":"15px"}} src={option.path_image} alt={option.id_employee}/>
                   <Box
                     sx={{
                       flexGrow: 1,
@@ -229,9 +143,9 @@ export default function GitHubLabel() {
                       },
                     }}
                   >
-                    {option.name}
+                    {option.shortName}
                     <br />
-                    <span>{option.description}</span>
+                    <span>{option.id_employee}</span>
                   </Box>
                   <Box
                     component={CloseIcon}
@@ -250,119 +164,20 @@ export default function GitHubLabel() {
                 bi = bi === -1 ? value.length + labels.indexOf(b) : bi;
                 return ai - bi;
               })}
-              getOptionLabel={(option) => option.name}
+              getOptionLabel={(option) => option.shortName}
               renderInput={(params) => (
-                <StyledInput
-                  ref={params.InputProps.ref}
-                  inputProps={params.inputProps}
-                  autoFocus
-                  placeholder="Filter labels"
-                />
+                <TextField {...params} autoFocus label="Search" variant="outlined" placeholder="EmployeeID / ShortName"
+                onClick={() => setOpen(true)}/>
               )}
             />
           </div>
         </ClickAwayListener>
-      </StyledPopper>
-    </React.Fragment>
+    </Container>
   );
 }
 
 interface LabelType {
-  name: string;
-  color: string;
-  description?: string;
+  shortName: string;
+  path_image: string;
+  id_employee: string;
 }
-
-// From https://github.com/abdonrd/github-labels
-const labels = [
-  {
-    name: 'good first issue',
-    color: '#7057ff',
-    description: 'Good for newcomers',
-  },
-  {
-    name: 'help wanted',
-    color: '#008672',
-    description: 'Extra attention is needed',
-  },
-  {
-    name: 'priority: critical',
-    color: '#b60205',
-    description: '',
-  },
-  {
-    name: 'priority: high',
-    color: '#d93f0b',
-    description: '',
-  },
-  {
-    name: 'priority: low',
-    color: '#0e8a16',
-    description: '',
-  },
-  {
-    name: 'priority: medium',
-    color: '#fbca04',
-    description: '',
-  },
-  {
-    name: "status: can't reproduce",
-    color: '#fec1c1',
-    description: '',
-  },
-  {
-    name: 'status: confirmed',
-    color: '#215cea',
-    description: '',
-  },
-  {
-    name: 'status: duplicate',
-    color: '#cfd3d7',
-    description: 'This issue or pull request already exists',
-  },
-  {
-    name: 'status: needs information',
-    color: '#fef2c0',
-    description: '',
-  },
-  {
-    name: 'status: wont do/fix',
-    color: '#eeeeee',
-    description: 'This will not be worked on',
-  },
-  {
-    name: 'type: bug',
-    color: '#d73a4a',
-    description: "Something isn't working",
-  },
-  {
-    name: 'type: discussion',
-    color: '#d4c5f9',
-    description: '',
-  },
-  {
-    name: 'type: documentation',
-    color: '#006b75',
-    description: '',
-  },
-  {
-    name: 'type: enhancement',
-    color: '#84b6eb',
-    description: '',
-  },
-  {
-    name: 'type: epic',
-    color: '#3e4b9e',
-    description: 'A theme of work that contain sub-tasks',
-  },
-  {
-    name: 'type: feature request',
-    color: '#fbca04',
-    description: 'New feature or request',
-  },
-  {
-    name: 'type: question',
-    color: '#d876e3',
-    description: 'Further information is requested',
-  },
-];
