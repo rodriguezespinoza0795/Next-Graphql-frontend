@@ -68,4 +68,4 @@ type e_employee = {
     id_unit_paf: number | null
 }
 
-type searchEmployeeResults = Pick<e_employee, 'id_employee' | 'shortName' | 'path_image'>
+type searchEmployeeResults = Pick<e_employee, 'id_employee' | 'shortName' | 'path_image'>;

@@ -251,10 +251,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 };
 
 export default function EnhancedTable({rows}) {
-
-console.log('rows', rows)
   const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Data>('calories');
+  const [orderBy, setOrderBy] = React.useState<keyof Data>('id_employee');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
@@ -341,13 +339,13 @@ console.log('rows', rows)
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.shortName);
+                  const isItemSelected = isSelected(row.id_employee.toString());
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.shortName)}
+                      onClick={(event) => handleClick(event, row.id_employee.toString())}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import GitHubLabel from "./testSearchInputs"
-import EnhancedTable from './table'
+import GitHubLabel from "../components/testSearchInputs"
+import EnhancedTable from '../components/table'
 
 const query = `
   query ExampleQuery($skip: Int, $take: Int) {
@@ -37,13 +37,11 @@ const useEmployees = () => {
       setStatus('loading')
       try {      
         const response = await requester( baseUrl, query, variables )
-
-        const { data } = ( await response.json()) as { data: searchEmployeeResults[]}
+        const { data } = await response.json()
         setSearchResult(data.getAllEmployees)
         setStatus('success')
       } catch (error) {
         setStatus('error')
-        console.log('Something went wrong!', error)
       }
     }
     searchEmployee()
@@ -56,9 +54,6 @@ const useEmployees = () => {
 function HomePage() {
   const [ rows, setRows] = useState([])
   const { searchResult, status } = useEmployees()
-
-  console.log(searchResult, status)
-  console.log('count', searchResult)
 
   return (
     <>

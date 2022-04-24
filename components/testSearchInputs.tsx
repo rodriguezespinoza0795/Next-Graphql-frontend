@@ -21,6 +21,7 @@ interface PopperComponentProps {
 }
 
 const StyledAutocompletePopper = styled('div')(({ theme }) => ({
+  position:"absolute",
   [`& .${autocompleteClasses.paper}`]: {
     boxShadow: 'none',
     margin: 0,
@@ -52,8 +53,8 @@ const StyledAutocompletePopper = styled('div')(({ theme }) => ({
 
 function PopperComponent(props: PopperComponentProps) {
   const { disablePortal, anchorEl, open, ...other } = props;
-  other.style.position = 'absolute'
-  return <StyledAutocompletePopper {...other} />;
+  // other.style.position = 'absolute'
+  return <StyledAutocompletePopper {...other } />;
 }
 
 export default function GitHubLabel({labels, setRows}) {
@@ -61,8 +62,6 @@ export default function GitHubLabel({labels, setRows}) {
   const [pendingValue, setPendingValue] = React.useState<LabelType[]>([]);
   const [open, setOpen] = React.useState(false)
   const theme = useTheme();
-
-  console.log('value', value)
 
   const handleClose = () => {
     setValue(pendingValue);
@@ -133,7 +132,7 @@ export default function GitHubLabel({labels, setRows}) {
                       mt: '2px',
                     }}
                   />
-                  <img style={{"height": "28px", "padding-right":"15px"}} src={option.path_image} alt={option.id_employee}/>
+                  <img style={{height: "28px", padding: 8}} src={option.path_image} alt={option.id_employee}/>
                   <Box
                     sx={{
                       flexGrow: 1,
@@ -157,7 +156,6 @@ export default function GitHubLabel({labels, setRows}) {
                 </li>
               )}
               options={[...labels].sort((a, b) => {
-                // Display the selected labels first.
                 let ai = value.indexOf(a);
                 ai = ai === -1 ? value.length + labels.indexOf(a) : ai;
                 let bi = value.indexOf(b);
